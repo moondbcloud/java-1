@@ -110,14 +110,7 @@ public class LoginTest extends JFrame {
 				}
 				
 				
-				// sql 구문 구성
-				
-				// Prepared Statement 구성후 실행
-				
- 
-				
-				// 실행 결과 확인 
-				
+			
 				
 			}
 		});
