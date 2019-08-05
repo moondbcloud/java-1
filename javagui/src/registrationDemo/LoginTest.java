@@ -1,4 +1,4 @@
-package tutorial;
+package registrationDemo;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -74,33 +74,36 @@ public class LoginTest extends JFrame {
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// DB Connection
-				Connection conn = null;
-				PreparedStatement pstmt = null;
-				ResultSet result = null;
-				String sql = null;
+				// first we need to choose database : DB Connection
+				// and add database jar file  to project 
 				String url = "jdbc:oracle:thin:@localhost:1521:xe";
 				String user = "madang";
 				String pwd = "madang";
 				
 				try {
+					// 연결 설정
 					Class.forName("oracle.jdbc.driver.OracleDriver");
-					conn = DriverManager.getConnection(url, user, pwd);
-					sql = "SELECT * FROM members WHERE userid = ? AND userpwd = ?";
-					pstmt = conn.prepareStatement(sql);
+					Connection conn = DriverManager.getConnection(url, user, pwd);
+					// id와 pwd 입력 받기
 					String uid = txtUserID.getText();
 					String upwd = txtUserPWD.getText();
+					
+					// 질의 구성
+					String sql = "SELECT * FROM members WHERE userid=? AND userpwd=?";
+					PreparedStatement pstmt = conn.prepareStatement(sql);
 					pstmt.setString(1, uid);
 					pstmt.setString(2, upwd);
 					
-					result = pstmt.executeQuery();
-					
+					// 질의 실행
+					ResultSet result = pstmt.executeQuery();
+
+					// 결과 처리
 					if(result.next()) {
-						JOptionPane.showMessageDialog(null, "로그인이 성공하였습니다.");
+						JOptionPane.showMessageDialog(null, "로그인에 성공하였습니다.");
 					}else {
-						JOptionPane.showMessageDialog(null, "로그인이 실패하였습니다.");
+						JOptionPane.showMessageDialog(null, "로그인에 실패하였습니다.");
 					}
-					
+
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -108,17 +111,6 @@ public class LoginTest extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
-				
-				// sql 구문 구성
-				
-				// Prepared Statement 구성후 실행
-				
- 
-				
-				// 실행 결과 확인 
-				
-				
 			}
 		});
 		btnLogin.setBounds(55, 179, 129, 29);
