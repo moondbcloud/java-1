@@ -103,7 +103,6 @@ public class LoginTest extends JFrame {
 					}else {
 						JOptionPane.showMessageDialog(null, "로그인에 실패하였습니다.");
 					}
-
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
