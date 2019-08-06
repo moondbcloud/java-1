@@ -81,6 +81,13 @@ public class LoginForm extends JFrame {
 		contentPane.add(lblPassword);
 		
 		JButton btnJoin = new JButton("Join");
+		btnJoin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				JoinForm joinform = new JoinForm();
+				joinform.setVisible(true);
+			}
+		});
 		btnJoin.setBounds(259, 267, 129, 29);
 		contentPane.add(btnJoin);
 		
