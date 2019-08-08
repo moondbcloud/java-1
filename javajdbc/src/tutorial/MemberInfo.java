@@ -1,11 +1,11 @@
 package tutorial;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -20,6 +20,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MemberInfo extends JFrame {
 
@@ -33,13 +37,14 @@ public class MemberInfo extends JFrame {
 	private JTextField txtUserPWD;
 	private JTextField txtPhone;
 	private JTextField txtAddress;
+	private JTable table;
 	/**
 	 * Create the frame.
 	 */
 	public MemberInfo() {
 		setTitle("Member Information Form");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 923, 617);
+		setBounds(100, 100, 1191, 633);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -118,7 +123,7 @@ public class MemberInfo extends JFrame {
 				
 			}
 		});
-		btnSearch.setBounds(18, 431, 129, 29);
+		btnSearch.setBounds(33, 520, 129, 29);
 		contentPane.add(btnSearch);
 		
 		JButton btnAdd = new JButton("Add");
@@ -146,9 +151,12 @@ public class MemberInfo extends JFrame {
 				}else {
 					JOptionPane.showMessageDialog(null, "동일한 ID의 레코드가 존재합니다.");
 				}// end of if else
+				
+				// 테이블 데이터를 로드하는 메서드 호출
+				dataLoad();
 			}// end of actionPerformed()
 		});
-		btnAdd.setBounds(165, 431, 129, 29);
+		btnAdd.setBounds(195, 520, 129, 29);
 		contentPane.add(btnAdd);
 		
 		JButton btnUpdate = new JButton("Update");
@@ -173,9 +181,12 @@ public class MemberInfo extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}
+				// 테이블 데이터를 로드하는 메서드 호출
+				dataLoad();
+			}// end of actionPerformed()
+
 		});
-		btnUpdate.setBounds(312, 431, 129, 29);
+		btnUpdate.setBounds(357, 520, 129, 29);
 		contentPane.add(btnUpdate);
 		
 		JButton btnDelete = new JButton("Delete");
@@ -192,9 +203,11 @@ public class MemberInfo extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}
+				// 테이블 데이터를 로드하는 메서드 호출
+				dataLoad();
+			}// end of actionPerformed()
 		});
-		btnDelete.setBounds(459, 431, 129, 29);
+		btnDelete.setBounds(519, 520, 129, 29);
 		contentPane.add(btnDelete);
 		
 		JButton btnExit = new JButton("Exit");
@@ -207,7 +220,7 @@ public class MemberInfo extends JFrame {
 				loginform.setVisible(true);
 			}
 		});
-		btnExit.setBounds(753, 431, 129, 29);
+		btnExit.setBounds(843, 520, 129, 29);
 		contentPane.add(btnExit);
 		
 		JButton btnClear = new JButton("Clear");
@@ -220,10 +233,62 @@ public class MemberInfo extends JFrame {
 			}
 		});
 		
-		btnClear.setBounds(606, 431, 129, 29);
+		btnClear.setBounds(681, 520, 129, 29);
 		contentPane.add(btnClear);
 		
-
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(409, 118, 664, 361);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// 테이블을 클랙했을 때, 행을 추출하고
+				// 추출된 행의 각 컬럼을 왼쪽에 있는 각각의 텍스트필드에 전달한다.
+				dbconnect();
+				int row = table.getSelectedRow();
+				String uid = (table.getModel().getValueAt(row, 0)).toString();
+				
+				// uid를 이용하여 db를 검색하고 검색된 결과를 텍스트 필드에 전달
+				sql = "SELECT * FROM members WHERE userid=?";
+				try {
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setString(1, uid);
+					result = pstmt.executeQuery();
+					while(result.next()) {
+						String vuserid = result.getString("userid");
+						String vuserpwd = result.getString("userpwd");
+						String vphone = result.getString("phone");
+						String vaddr = result.getString("address");
+						txtUserID.setText(vuserid);
+						txtUserPWD.setText(vuserpwd);
+						txtPhone.setText(vphone);
+						txtAddress.setText(vaddr);
+					}// end of while
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				// ----
+			}
+		});
+		scrollPane.setViewportView(table);
+		
+		JButton btnDataLoad = new JButton("Data Load");
+		btnDataLoad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// 테이블 데이터를 로드하는 메서드 호출
+				dataLoad();
+			}//end of actionPerformed()
+		});
+		btnDataLoad.setBounds(1005, 520, 129, 29);
+		contentPane.add(btnDataLoad);
+		
+		// 테이블 데이터를 로드하는 메서드 호출
+		dataLoad();
+		
 	}// end of MemberInfo()
 	
 	void dbconnect() {
@@ -278,4 +343,19 @@ public class MemberInfo extends JFrame {
 				e.printStackTrace();
 			}
 	}//end of closeAll()
+	
+	void dataLoad() {
+		// JTable에 테이블 데이터를 로드한다.
+		dbconnect();
+		sql = "SELECT * FROM members";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			result = pstmt.executeQuery();
+			// 질의 결과를 table에 넘겨준다.
+			table.setModel(DbUtils.resultSetToTableModel(result));
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}// end of dataLoad()
 }
