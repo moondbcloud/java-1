@@ -6,12 +6,13 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" 
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+      href="./resources/css/bootstrap.min.css">
 <title>Insert title here</title>
 </head>
 <body>
-  <!--  메뉴 부분이 나타나는 곳 -->
+  <!--  메뉴 부분 시작-->
 	<%@ include file="menu.jsp" %>
+	<!--  메뉴 부분 끝-->
 	
 	<%! String greeting="웹 쇼핑몰에 오신 것을 환영합니다" ;
 			String tailine ="Welcome to Web Market"; 
@@ -43,6 +44,8 @@
 			}
 			String CT = hour + ":" + minute + ":" + second + " " + am_pm;
 			out.println("현재 접속시간: " + CT + "\n");
+			
+			response.setIntHeader("refresh", 1);
 			%>
 		</div>
 	</div>

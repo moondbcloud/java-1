@@ -1,14 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@page import="java.util.ArrayList" %>
-<%@page import="dto.Product" %>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="dto.Product"%>
+<%@ page import="dao.ProductRepository"%>
 <jsp:useBean id="productDAO" class="dao.ProductRepository" scope="session" />    
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" 
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="./resources/css/bootstrap.min.css">
 <title>상품목록</title>
 </head>
 <body>
@@ -21,9 +21,11 @@
 		</div>
 	</div>
 	
-	<% 
-		ArrayList<Product> listOfProducts = productDAO.getAllProducts();
+	<%
+		ProductRepository dao = ProductRepository.getInstance();
+		ArrayList<Product> listOfProducts = dao.getAllProducts();
 	%>
+	
 	<div class="container">
 		<div class="row" align="center">
 			<%
@@ -32,15 +34,17 @@
 				
 			%>
 			<div class="col-md-4">
+				<img src="./resources/images/<%=product.getFilename()%>" style="width:100%" alt="<%=product.getFilename()%>" />
 				<h3><%=product.getPname()%></h3>
 				<p><%=product.getDescription()%></p>
 				<p><%=product.getUnitPrice()%>원</p>
+				<p><a href="./product.jsp?id=<%=product.getProductId()%>"
+				class="btn btn-secondary" role="button">상세정보&raquo;</a></p>
 			</div>
 			<%
 				}// end of for
 			%>		
 		</div>
-		<hr>
 	</div>
 	<jsp:include page="footer.jsp" />
 </body>
